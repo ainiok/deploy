@@ -8,6 +8,7 @@
 
 ES_CONF=/etc/elasticsearch/elasticsearch.yml
 ES_SERVICES=/usr/lib/systemd/system/elasticsearch.service
+ES_MAPPING=./mapping.json
 
 function Install_rpms()
 {
@@ -31,17 +32,17 @@ function Config_Es()
     sysctl -w vm.max_map_count=262144
     systemctl start elasticsearch
     echo "Waitting for elasticsearch start"
-
+    MAPPING=$(cat $ES_MAPPING)
     max_try=20
     while [ "$max_try" -gt 0 ];do
-        ES_ID=$(pgrep -f go-mysql-elasticsearch|head -n 1)
+        ES_ID=$(pgrep -f elasticsearch|head -n 1)
         if [ -n "$ES_ID" ];then
-           break
+            # curl -XPUT 192.168.0.1:9200/_template/common -d "$MAPPING"
+            break
         fi
         let max_try--
         sleep 15
     done
-    # curl -XPUT 192.168.0.1:9200/_template/common -d "$MAPPING"
 }
 Install_rpms
 Config_Es

@@ -1,0 +1,96 @@
+{
+  "template": "*",
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 1,
+    "analysis": {
+      "analyzer": {
+        "phper": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "filter": [
+            "lowercase"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "cinder_volumes": {
+      "_parent": {
+        "type": "cinder_volume_types"
+      }
+    },
+    "cinder_sf_backup_specs": {
+      "_parent": {
+        "type": "cinder_volumes"
+      }
+    },
+    "nova_sf_devs": {
+      "_parent": {
+        "type": "nova_sf_sslvpns"
+      }
+    },
+    "neutron_sffipallocs": {
+      "_parent": {
+        "type": "neutron_ports"
+      }
+    },
+	"neutron_sfsharedbw_associates": {
+      "_parent": {
+        "type": "neutron_sffipallocs"
+      }
+    },
+    "cplog_cmlogs": {
+      "properties": {
+        "level": {
+          "type": "text"
+        }
+      }
+    },
+    "_default_": {
+      "dynamic_date_formats": [
+        "yyyy-MM-dd HH:mm:ss"
+      ],
+      "dynamic_templates": [
+        {
+          "login_at": {
+            "match": "login_at",
+            "mapping": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        },
+		{
+          "object_type": {
+            "match": "object_type",
+            "mapping": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        },
+        {
+          "id2keyword": {
+            "match": "*id",
+            "mapping": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        },
+        {
+          "strings": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "text",
+              "fielddata": true,
+              "analyzer": "phper"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
